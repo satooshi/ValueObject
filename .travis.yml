@@ -7,13 +7,13 @@ php:
 before_script:
   - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ~/xdebug.ini
   - ant prepare get-phar
-  - php bin/php/composer.phar install --dev --no-interaction --prefer-source
+  - composer install --dev --no-interaction --prefer-source
 
 script:
   - output=$(php -n bin/php/php-cs-fixer.phar fix -v --dry-run --level=all src); if [[ $output ]]; then while read -r line; do echo -e "\e[00;31m$line\e[00m"; done <<< "$output"; false; fi;
   - php vendor/bin/phpcs --report=checkstyle --report-file=build/logs/checkstyle.xml --standard=build/config/phpcs.xml --ignore=*.html.php,*.config.php,*.twig.php src
 #  - php vendor/bin/phpmd src xml build/config/phpmd.xml --reportfile build/logs/pmd.xml
-  - cp ~/xdebug.ini ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - TRAVIS_PHP_VERSION  cp ~/xdebug.ini ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
   - php bin/php/phpunit.phar -c travis.phpunit.xml
   - rm ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
 
