@@ -3,7 +3,7 @@ ValueObject, Enum, BitField
 
 [![Build Status](https://travis-ci.org/satooshi/ValueObject.png?branch=master)](https://travis-ci.org/satooshi/ValueObject)
 [![Coverage Status](https://coveralls.io/repos/satooshi/ValueObject/badge.png?branch=master)](https://coveralls.io/r/satooshi/ValueObject)
-[![Dependency Status](https://www.versioneye.com/package/php--satooshi--ValueObject/badge.png)](https://www.versioneye.com/package/php--satooshi--ValueObject)
+[![Dependency Status](https://www.versioneye.com/user/projects/52b4832dec1375849f000159/badge.png)](https://www.versioneye.com/user/projects/52b4832dec1375849f000159)
 
 [![Latest Stable Version](https://poser.pugx.org/satooshi/ValueObject/v/stable.png)](https://packagist.org/packages/satooshi/ValueObject)
 [![Total Downloads](https://poser.pugx.org/satooshi/ValueObject/downloads.png)](https://packagist.org/packages/satooshi/ValueObject)
