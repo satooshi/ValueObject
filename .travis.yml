@@ -2,6 +2,7 @@ language: php
 php:
   - 5.5
   - 5.4
+  - hhvm
 
 before_script:
   - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ~/xdebug.ini
