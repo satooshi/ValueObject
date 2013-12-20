@@ -2,8 +2,6 @@
 
 namespace Satooshi\Component\Flags;
 
-use Satooshi\Component\ValueObject\ValueObject;
-
 /**
  * FlagsValueObject implementation.
  *
