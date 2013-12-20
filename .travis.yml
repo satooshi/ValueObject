@@ -4,9 +4,12 @@ php:
   - 5.4
   - hhvm
 
+matrix:
+  allow_failures:
+    - php: hhvm
+
 before_script:
-  - sh -c "if [ [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ] ]; then mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ~/xdebug.ini; fi"
-#  - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ~/xdebug.ini
+  - sh -c "if [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ]; then mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ~/xdebug.ini; fi"
   - ant prepare get-phar
   - composer install --dev --no-interaction --prefer-source
 
@@ -14,14 +17,11 @@ script:
   - output=$(php bin/php/php-cs-fixer.phar fix -v --dry-run --level=all src); if [[ $output ]]; then while read -r line; do echo -e "\e[00;31m$line\e[00m"; done <<< "$output"; false; fi;
   - php vendor/bin/phpcs --report=checkstyle --report-file=build/logs/checkstyle.xml --standard=build/config/phpcs.xml --ignore=*.html.php,*.config.php,*.twig.php src
 #  - php vendor/bin/phpmd src xml build/config/phpmd.xml --reportfile build/logs/pmd.xml
-  - sh -c "if [ [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ] ]; then cp ~/xdebug.ini ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini; fi"
-#  - cp ~/xdebug.ini ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - sh -c "if [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ]; then cp ~/xdebug.ini ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini; fi"
   - php bin/php/phpunit.phar -c travis.phpunit.xml
-  - sh -c "if [ [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ] ]; then rm ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini; fi"
-#  - rm ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+  - sh -c "if [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ]; then rm ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini; fi"
 
 after_script:
-  - mkdir travis
   - curl -s https://gist.github.com/satooshi/4750401/raw > travis/ColorCLI.php
   - curl -s https://gist.github.com/satooshi/4752226/raw > travis/junit.php
 #  - curl -s https://gist.github.com/satooshi/4958593/raw > travis/pmd.php
@@ -29,5 +29,5 @@ after_script:
   - php travis/checkstyle.php
 #  - php travis/pmd.php
   - php travis/junit.php
-  - php vendor/bin/coveralls -v --exclude-no-stmt
+  - sh -c "if [ \"$TRAVIS_PHP_VERSION\" != \"hhvm\" ]; then php vendor/bin/coveralls -v --exclude-no-stmt; fi"
 
