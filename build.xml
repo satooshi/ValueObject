@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ValueObject" default="build" basedir=".">
+    <target name="build-ci" depends="prepare,lint,apigen,phploc,phpcb,php-cs-fixer-dry-run,phpcs-ci,phpmd-ci,phpcpd,phpunit,pdepend"/>
+
+    <target name="build" depends="prepare,lint,php-cs-fixer-dry-run,phpcs-ci,checkstyle-cli,phpmd,pmd-cli,phpcpd,phpunit,pdepend,junit-cli"/>
+
+    <target name="test" depends="prepare,lint,phpunit,pdepend"/>
+
+    <target name="analysis" depends="prepare,lint,php-cs-fixer-dry-run,phpcs,phpmd,phpcpd"/>
+
+    <target name="doc" depends="prepare,lint,apigen,checkstyle-cli"/>
+
+    <target name="get-phar" depends="get-composer,get-cs-fixer,get-phpcpd,get-phpunit,get-pdepend"/>
+
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="${basedir}/build/api"/>
+        <delete dir="${basedir}/build/coverage"/>
+        <delete dir="${basedir}/build/logs"/>
+        <delete dir="${basedir}/build/pdepend"/>
+    </target>
+
+    <target name="prepare" depends="clean" description="Prepare for build">
+        <mkdir dir="${basedir}/bin/php"/>
+        <mkdir dir="${basedir}/build/api"/>
+        <mkdir dir="${basedir}/build/coverage"/>
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/pdepend"/>
+    </target>
+
+    <!-- composer -->
+
+    <target name="get-composer" description="Get Composer">
+        <get src="http://getcomposer.org/composer.phar" dest="${basedir}/bin/php/composer.phar"/>
+        <chmod file="${basedir}/bin/php/composer.phar" perm="+x"/>
+    </target>
+
+    <target name="composer-self-update">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/composer.phar"/>
+            <arg value="self-update"/>
+        </exec>
+    </target>
+
+    <target name="composer-install" depends="composer-self-update">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/composer.phar"/>
+            <arg value="install"/>
+            <arg value="--no-interaction"/>
+            <arg value="--prefer-source"/>
+        </exec>
+    </target>
+
+    <target name="composer-update" depends="composer-self-update">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/composer.phar"/>
+            <arg value="update"/>
+            <arg value="--no-interaction"/>
+            <arg value="--prefer-source"/>
+        </exec>
+    </target>
+
+    <!-- apigen -->
+
+    <target name="apigen" description="Generate API documentation using apigen">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/vendor/bin/apigen.php"/>
+            <arg value="-c"/>
+            <arg path="${basedir}/build/config/apigen.neon"/>
+            <arg value="-d"/>
+            <arg path="${basedir}/build/api"/>
+            <arg value="-s"/>
+            <arg path="${basedir}/src"/>
+            <arg value="-s"/>
+            <arg path="${basedir}/vendor/symfony"/>
+            <arg value="-s"/>
+            <arg path="${basedir}/vendor/psr/log"/>
+            <arg value="--report"/>
+            <arg path="${basedir}/build/logs/checkstyle-apigen.xml"/>
+            <arg value="--exclude"/>
+            <arg value="*Test.php"/>
+            <arg value="--exclude"/>
+            <arg value="*/Tests/*"/>
+        </exec>
+    </target>
+
+    <!--  static analysis tools -->
+
+    <target name="lint" description="Perform syntax check of sourcecode files">
+        <apply executable="php" failonerror="true">
+            <arg value="-n"/>
+            <arg value="-l"/>
+
+            <fileset dir="${basedir}/src">
+                <include name="**/*.php"/>
+                <modified/>
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="phploc" description="Measure project size using PHPLOC">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg value="phploc"/>
+            <arg value="--log-csv"/>
+            <arg value="${basedir}/build/logs/phploc.csv"/>
+            <arg path="${basedir}/src"/>
+        </exec>
+    </target>
+
+    <target name="phpcb" description="Aggregate tool output with PHP_CodeBrowser">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg value="phpcb"/>
+            <arg value="--log"/>
+            <arg path="${basedir}/build/logs"/>
+            <arg value="--source"/>
+            <arg path="${basedir}/src"/>
+            <arg value="--output"/>
+            <arg path="${basedir}/build/code-browser"/>
+        </exec>
+    </target>
+
+    <!-- php-cs-fixer -->
+
+    <target name="get-cs-fixer" depends="clean" description="Get coding standards fixer">
+        <get src="http://cs.sensiolabs.org/get/php-cs-fixer.phar" dest="${basedir}/php-cs-fixer.phar"/>
+    </target>
+
+    <target name="php-cs-fixer-dry-run" depends="clean" description="Get coding standards fixer">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg path="${basedir}/php-cs-fixer.phar"/>
+            <arg value="fix"/>
+            <arg path="${basedir}/src"/>
+            <arg value="--level=all"/>
+            <arg value="--dry-run"/>
+            <arg value="--verbose"/>
+        </exec>
+    </target>
+
+    <target name="php-cs-fixer-fix" depends="clean" description="Get coding standards fixer">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg path="${basedir}/php-cs-fixer.phar"/>
+            <arg value="fix"/>
+            <arg path="${basedir}/src"/>
+            <arg value="--level=all"/>
+            <arg value="--verbose"/>
+        </exec>
+    </target>
+
+    <!-- phpcs -->
+
+    <target name="phpcs" description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/vendor/bin/phpcs"/>
+            <arg value="--standard=${basedir}/build/config/phpcs.xml"/>
+            <arg value="--ignore=*.html.php,*.config.php,*.twig.php"/>
+            <arg path="${basedir}/src"/>
+        </exec>
+    </target>
+
+    <target name="phpcs-ci" description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/vendor/bin/phpcs"/>
+            <arg value="--report=checkstyle"/>
+            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml"/>
+            <arg value="--standard=${basedir}/build/config/phpcs.xml"/>
+            <arg value="--ignore=*.html.php,*.config.php,*.twig.php"/>
+            <arg path="${basedir}/src"/>
+        </exec>
+    </target>
+
+    <!-- phpmd -->
+
+    <target name="phpmd" description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/vendor/bin/phpmd"/>
+            <arg path="${basedir}/src"/>
+            <arg value="xml"/>
+            <arg value="${basedir}/build/config/phpmd.xml"/>
+            <arg value="--reportfile"/>
+            <arg value="${basedir}/build/logs/pmd.xml"/>
+        </exec>
+    </target>
+
+    <target name="phpmd-ci" description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/vendor/bin/phpmd"/>
+            <arg path="${basedir}/src"/>
+            <arg value="xml"/>
+            <arg value="${basedir}/build/config/phpmd.xml"/>
+            <arg value="--reportfile"/>
+            <arg value="${basedir}/build/logs/pmd.xml"/>
+        </exec>
+    </target>
+
+    <!-- phpcpd -->
+
+    <target name="get-phpcpd" description="Get PHPCPD">
+        <get src="http://phar.phpunit.de/phpcpd.phar" dest="${basedir}/bin/php/phpcpd.phar"/>
+        <chmod file="${basedir}/bin/php/phpcpd.phar" perm="+x"/>
+    </target>
+
+    <target name="phpcpd" description="Find duplicate code using PHPCPD">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/phpcpd.phar"/>
+            <arg value="--log-pmd"/>
+            <arg value="${basedir}/build/logs/pmd-cpd.xml"/>
+            <arg path="${basedir}/src"/>
+        </exec>
+    </target>
+
+    <!-- phpunit -->
+
+    <target name="get-phpunit" description="Get PHPUnit">
+        <get src="http://phar.phpunit.de/phpunit.phar" dest="${basedir}/bin/php/phpunit.phar"/>
+        <chmod file="${basedir}/bin/php/phpunit.phar" perm="+x"/>
+    </target>
+
+    <target name="phpunit" description="Run unit tests with PHPUnit">
+        <exec executable="php" failonerror="false">
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/phpunit.phar"/>
+            <arg value="--configuration"/>
+            <arg path="${basedir}/phpunit.xml.dist"/>
+        </exec>
+    </target>
+
+    <target name="phpunit-noxdebug" description="Run unit tests with PHPUnit">
+        <exec executable="php" failonerror="false">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/phpunit.phar"/>
+            <arg value="--configuration"/>
+            <arg path="${basedir}/phpunit.xml.dist"/>
+        </exec>
+    </target>
+
+    <!--  pdepend -->
+
+    <target name="get-pdepend" description="Get pdepend">
+        <get src="http://static.pdepend.org/php/latest/pdepend.phar" dest="${basedir}/bin/php/pdepend.phar"/>
+        <chmod file="${basedir}/bin/php/pdepend.phar" perm="+x"/>
+    </target>
+
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/pdepend.phar"/>
+            <arg value="--coverage-report=${basedir}/build/logs/clover.xml"/>
+            <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml"/>
+            <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg"/>
+            <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg"/>
+            <arg path="${basedir}/src"/>
+        </exec>
+    </target>
+
+    <!-- for travis console -->
+
+    <target name="junit-cli" description="Show elapsed time of PHPUnit tests">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/travis/junit.php"/>
+        </exec>
+    </target>
+
+    <target name="pmd-cli" description="Show violations by PHPMD">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/travis/pmd.php"/>
+        </exec>
+    </target>
+
+    <target name="checkstyle-cli" description="Show violations by PHP_CodeSniffer and apigen">
+        <exec executable="php">
+            <arg value="-n"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/travis/checkstyle.php"/>
+        </exec>
+    </target>
+</project>

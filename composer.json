@@ -1,0 +1,35 @@
+{
+	"name" : "satooshi/ValueObject",
+	"description" : "ValueObject, Enum, Flags implementation in PHP",
+	"type" : "library",
+	"authors" : [{
+			"name" : "Kitamura Satoshi",
+			"email" : "with.no.parachute@gmail.com"
+		}
+	],
+	"keywords" : [
+		"domain-driven design",
+		"ValueObject",
+		"Enum",
+		"Flags"
+	],
+	"homepage" : "https://github.com/satooshi/ValueObject",
+	"license" : [
+		"MIT"
+	],
+	"require" : {
+		"php" : ">=5.4"
+	},
+	"require-dev" : {
+		"apigen/apigen" : "2.8.*@stable",
+		"satooshi/php-coveralls" : "dev-master",
+		"squizlabs/php_codesniffer" : "1.4.*@stable",
+		"phpmd/phpmd" : "dev-master"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"Satooshi\\Component" : "src/"
+		}
+	},
+	"minimum-stability" : "stable"
+}
