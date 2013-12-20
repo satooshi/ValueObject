@@ -23,7 +23,7 @@
 	"require-dev" : {
 		"apigen/apigen" : "2.8.*@stable",
 		"satooshi/php-coveralls" : "dev-master",
-		"squizlabs/php_codesniffer" : "1.4.*@stable",
+		"squizlabs/php_codesniffer" : "1.5.*@stable",
 		"phpmd/phpmd" : "dev-master"
 	},
 	"autoload" : {
