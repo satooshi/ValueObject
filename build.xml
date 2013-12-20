@@ -151,14 +151,19 @@
 
     <!-- php-cs-fixer -->
 
-    <target name="get-cs-fixer" depends="clean" description="Get coding standards fixer">
-        <get src="http://cs.sensiolabs.org/get/php-cs-fixer.phar" dest="${basedir}/php-cs-fixer.phar"/>
+    <target name="get-cs-fixer" description="Get coding standards fixer">
+        <get src="http://cs.sensiolabs.org/get/php-cs-fixer.phar" dest="${basedir}/bin/php/php-cs-fixer.phar"/>
+        <chmod file="${basedir}/bin/php/php-cs-fixer.phar" perm="+x"/>
     </target>
 
     <target name="php-cs-fixer-dry-run" depends="clean" description="Get coding standards fixer">
         <exec executable="php" failonerror="false">
             <arg value="-n"/>
-            <arg path="${basedir}/php-cs-fixer.phar"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/php-cs-fixer.phar"/>
             <arg value="fix"/>
             <arg path="${basedir}/src"/>
             <arg value="--level=all"/>
@@ -170,7 +175,11 @@
     <target name="php-cs-fixer-fix" depends="clean" description="Get coding standards fixer">
         <exec executable="php" failonerror="false">
             <arg value="-n"/>
-            <arg path="${basedir}/php-cs-fixer.phar"/>
+            <arg value="-d"/>
+            <arg value="date.timezone=Asia/Tokyo"/>
+            <arg value="-d"/>
+            <arg value="memory_limit=-1"/>
+            <arg path="${basedir}/bin/php/php-cs-fixer.phar"/>
             <arg value="fix"/>
             <arg path="${basedir}/src"/>
             <arg value="--level=all"/>
