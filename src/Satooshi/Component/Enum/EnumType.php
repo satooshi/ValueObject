@@ -113,7 +113,7 @@ trait EnumType
             return array_search($value, self::$options, true);
         }
 
-        throw new \InvalidArgumentException('value (%s) is not defined in %s', $value, get_called_class());
+        throw new \InvalidArgumentException(sprintf('value (%s) is not defined in %s', $value, get_called_class()));
     }
 
     /**
