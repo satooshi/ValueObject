@@ -10,6 +10,18 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
 {
     // getOptions()
 
+    public function testGetOptionsFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $options = Gender::getOptions();
+
+        $this->assertSame(['MALE' => Gender::MALE, 'FEMALE' => Gender::FEMALE], $options);
+    }
+
+    /**
+     * @depends testGetOptionsFirstTime
+     */
     public function testGetOptions()
     {
         $options = Gender::getOptions();
@@ -19,6 +31,18 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
 
     // getValues()
 
+    public function testGetValuesFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $values = Gender::getValues();
+
+        $this->assertSame([Gender::MALE, Gender::FEMALE], $values);
+    }
+
+    /**
+     * @depends testGetValuesFirstTime
+     */
     public function testGetValues()
     {
         $values = Gender::getValues();
@@ -28,6 +52,18 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
 
     // getNames()
 
+    public function testGetNamesFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $values = Gender::getNames();
+
+        $this->assertSame(['MALE', 'FEMALE'], $values);
+    }
+
+    /**
+     * @depends testGetNamesFirstTime
+     */
     public function testGetNames()
     {
         $values = Gender::getNames();
@@ -37,12 +73,36 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
 
     // isDefined()
 
+    public function testIsDefinedTrueFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $this->assertTrue(Gender::isDefined(Gender::MALE));
+
+        $this->initStaticOptions();
+
+        $this->assertTrue(Gender::isDefined(Gender::FEMALE));
+    }
+
+    /**
+     * @depends testIsDefinedTrueFirstTime
+     */
     public function testIsDefinedTrue()
     {
         $this->assertTrue(Gender::isDefined(Gender::MALE));
         $this->assertTrue(Gender::isDefined(Gender::FEMALE));
     }
 
+    public function testIsDefinedFalseFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $this->assertFalse(Gender::isDefined('X'));
+    }
+
+    /**
+     * @depends testIsDefinedFalseFirstTime
+     */
     public function testIsDefinedFalse()
     {
         $this->assertFalse(Gender::isDefined('X'));
@@ -50,12 +110,36 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
 
     // isDefinedName()
 
+    public function testIsDefinedNameTrueFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $this->assertTrue(Gender::isDefinedName('MALE'));
+
+        $this->initStaticOptions();
+
+        $this->assertTrue(Gender::isDefinedName('FEMALE'));
+    }
+
+    /**
+     * @depends testIsDefinedNameTrueFirstTime
+     */
     public function testIsDefinedNameTrue()
     {
         $this->assertTrue(Gender::isDefinedName('MALE'));
         $this->assertTrue(Gender::isDefinedName('FEMALE'));
     }
 
+    public function testIsDefinedNameFalseFirstTime()
+    {
+        $this->initStaticOptions();
+
+        $this->assertFalse(Gender::isDefinedName('ROBOT'));
+    }
+
+    /**
+     * @depends testIsDefinedNameFalseFirstTime
+     */
     public function testIsDefinedNameFalse()
     {
         $this->assertFalse(Gender::isDefinedName('ROBOT'));
@@ -123,5 +207,15 @@ class EnumTypeTest extends \PHPUnit_Framework_TestCase
     public function testGetOrdinalOfNameInvalidArgumentException()
     {
         Gender::getOrdinalOfName('ROBOT');
+    }
+
+    // internal method
+
+    protected function initStaticOptions()
+    {
+        $refClass = new \ReflectionClass('\Satooshi\Component\Enum\Gender');
+        $refProp  = $refClass->getProperty('options');
+        $refProp->setAccessible(true);
+        $refProp->setValue(null, null);
     }
 }
