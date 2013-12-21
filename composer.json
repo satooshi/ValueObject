@@ -1,5 +1,5 @@
 {
-	"name" : "satooshi/value-objec",
+	"name" : "satooshi/value-object",
 	"description" : "ValueObject, Enum, Flags implementation in PHP",
 	"type" : "library",
 	"authors" : [{
