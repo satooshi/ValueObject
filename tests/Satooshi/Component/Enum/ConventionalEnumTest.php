@@ -4,6 +4,7 @@ namespace Satooshi\Component\Enum;
 
 /**
  * @covers \Satooshi\Component\Enum\ConventionalEnum
+ * @covers \Satooshi\Component\Enum\EnumObject
  * @group unit
  */
 class ConventionalEnumTest extends \PHPUnit_Framework_TestCase
@@ -18,6 +19,26 @@ class ConventionalEnumTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($obj->isMale());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCallIsInvalidArgumentException()
+    {
+        $obj = Gender::createFemale();
+
+        $obj->isRobot();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCallInvalidArgumentException()
+    {
+        $obj = Gender::createFemale();
+
+        $obj->greet();
+    }
+
     // __callStatic()
 
     public function testCallStaticCreate()
@@ -27,4 +48,19 @@ class ConventionalEnumTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Satooshi\Component\Enum\Gender', $obj);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCallStaticCreateInvalidArgumentException()
+    {
+        Gender::createRobot();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCallStaticInvalidArgumentException()
+    {
+        Gender::greet();
+    }
 }

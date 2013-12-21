@@ -9,9 +9,47 @@ namespace Satooshi\Component\Enum;
 class EnumValueObjectTraitTest extends \PHPUnit_Framework_TestCase
 {
     // __invoke()
+
+    public function testInvoke()
+    {
+        $obj = Gender::createMale();
+
+        $this->assertEquals('M', $obj());
+    }
+
     // __toString()
+
+    public function testToString()
+    {
+        $obj = Gender::createMale();
+
+        $this->assertEquals('M', "$obj");
+    }
+
     // __set()
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testSet()
+    {
+        $obj = Gender::createMale();
+
+        $obj->undefinedProp = 'value';
+    }
+
     // __get()
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testGet()
+    {
+        $obj = Gender::createMale();
+
+        $obj->undefinedProp;
+    }
+
     // isSameValueAs()
 
     public function testIsSameValueAsTrue()
@@ -37,7 +75,33 @@ class EnumValueObjectTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     // compareTo()
+
+    public function testCompareTo()
+    {
+        $obj   = Gender::createMale();
+        $other = Gender::createFemale();
+
+        $this->assertEquals(-1, $obj->compareTo($other));
+        $this->assertEquals(1, $other->compareTo($obj));
+        $this->assertEquals(0, $obj->compareTo($obj));
+    }
+
     // getOrdinal()
+
+    public function testGetOrdinal0()
+    {
+        $obj = Gender::createMale();
+
+        $this->assertEquals(0, $obj->getOrdinal());
+    }
+
+    public function testGetOrdinal1()
+    {
+        $obj = Gender::createFemale();
+
+        $this->assertEquals(1, $obj->getOrdinal());
+    }
+
     // getValue()
 
     public function testGetValue()
@@ -48,4 +112,11 @@ class EnumValueObjectTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     // getName()
+
+    public function testGetName()
+    {
+        $obj = Gender::createMale();
+
+        $this->assertEquals('MALE', $obj->getName());
+    }
 }
