@@ -133,7 +133,7 @@ trait EnumType
 
         $values = self::getValues();
 
-        return self::indexOrNull($value, $values);
+        return array_search($value, $values, true);
     }
 
     /**
@@ -153,24 +153,7 @@ trait EnumType
 
         $names = self::getNames();
 
-        return self::indexOrNull($name, $names);
-    }
-
-    /**
-     * Return an array index or null if not found.
-     *
-     * @param integer|string $needle
-     * @param array          $haystack
-     *
-     * @return mixed|null
-     */
-    final private static function indexOrNull($needle, array $haystack)
-    {
-        if (in_array($needle, $haystack, true)) {
-            return array_search($needle, $haystack, true);
-        }
-
-        return null;
+        return array_search($name, $names, true);
     }
 
     /**
