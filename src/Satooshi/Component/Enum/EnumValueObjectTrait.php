@@ -29,11 +29,9 @@ trait EnumValueObjectTrait
      *
      *     $v = $v1() | $v2();
      *
-     * @param mixed $arg
-     *
      * @return integer|string
      */
-    final public function __invoke($arg)
+    final public function __invoke()
     {
         return $this->value;
     }
