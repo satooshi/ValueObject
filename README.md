@@ -5,8 +5,8 @@ ValueObject, Enum, BitField
 [![Coverage Status](https://coveralls.io/repos/satooshi/ValueObject/badge.png?branch=master)](https://coveralls.io/r/satooshi/ValueObject)
 [![Dependency Status](https://www.versioneye.com/user/projects/52b4832dec1375849f000159/badge.png)](https://www.versioneye.com/user/projects/52b4832dec1375849f000159)
 
-[![Latest Stable Version](https://poser.pugx.org/satooshi/ValueObject/v/stable.png)](https://packagist.org/packages/satooshi/ValueObject)
-[![Total Downloads](https://poser.pugx.org/satooshi/ValueObject/downloads.png)](https://packagist.org/packages/satooshi/ValueObject)
+[![Latest Stable Version](https://poser.pugx.org/satooshi/value-object/v/stable.png)](https://packagist.org/packages/satooshi/value-object)
+[![Total Downloads](https://poser.pugx.org/satooshi/value-object/downloads.png)](https://packagist.org/packages/satooshi/value-object)
 
 ## ValueObject
 
