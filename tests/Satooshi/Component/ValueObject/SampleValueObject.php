@@ -19,19 +19,11 @@ final class SampleValueObject implements ValueObject
 
     public function isSameValueAs(ValueObject $other)
     {
-        if (!$this->isValidateType($other)) {
-            return false;
-        }
-
-        if ($this->value1 !== $other->value1) {
-            return false;
-        }
-
-        if ($this->value2 !== $other->value2) {
-            return false;
-        }
-
-        return true;
+        return (new EqualsBuilder)
+        ->setEquals($this->isValidateType($other))
+        ->append($this->value1, $other->value1)
+        ->append($this->value2, $other->value2)
+        ->isEquals();
     }
 
     public function serialize()
