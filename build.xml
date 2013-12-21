@@ -91,10 +91,6 @@
             <arg path="${basedir}/build/api"/>
             <arg value="-s"/>
             <arg path="${basedir}/src"/>
-            <arg value="-s"/>
-            <arg path="${basedir}/vendor/symfony"/>
-            <arg value="-s"/>
-            <arg path="${basedir}/vendor/psr/log"/>
             <arg value="--report"/>
             <arg path="${basedir}/build/logs/checkstyle-apigen.xml"/>
             <arg value="--exclude"/>
