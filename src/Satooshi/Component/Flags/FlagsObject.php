@@ -40,8 +40,7 @@ trait FlagsObject
      */
     final public function validateValue($value)
     {
-        //TODO assert type is positive integer >= 0
-        if (!self::isDefined($value) && !$this->hasFlagValue($value)) {
+        if (!is_int($value) || !$this->isFlagMemer($value)) {
             throw new \InvalidArgumentException(sprintf('value is not defined: %s', $value));
         }
     }
@@ -59,5 +58,28 @@ trait FlagsObject
         $value = self::getValueOf($nameUpperCase);
 
         return $this->hasFlagValue($value) || $this->isSameValue($value);
+    }
+
+    /**
+     * Return whether the value is a flag member.
+     *
+     * @param integer $value
+     *
+     * @return boolean
+     */
+    final private function isFlagMemer($value)
+    {
+        $values = self::getValues();
+        rsort($values, SORT_NUMERIC);
+
+        foreach ($values as $flag) {
+            if ($value === 0) {
+                return true;
+            }
+
+            $value = $value & ~$flag;
+        }
+
+        return $value === 0;
     }
 }
