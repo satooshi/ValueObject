@@ -23,7 +23,7 @@ trait FlagsValueObjectTrait
      */
     final public function hasFlag(FlagsValueObject $flag)
     {
-        foreach ($values as $value) {
+        foreach ($flag->getFlags() as $value) {
             if (!in_array($value, $this->flagValues)) {
                 return false;
             }
