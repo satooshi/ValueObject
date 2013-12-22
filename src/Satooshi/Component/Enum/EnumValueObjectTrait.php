@@ -82,7 +82,7 @@ trait EnumValueObjectTrait
      */
     final public function isSameValueAs(ValueObject $other)
     {
-        return $this->isValidateType($other) && $this->isSameValue($other->getValue());
+        return $this->isValidType($other) && $this->isSameValue($other->getValue());
     }
 
     /**

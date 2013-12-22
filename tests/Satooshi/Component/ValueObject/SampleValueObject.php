@@ -20,7 +20,7 @@ final class SampleValueObject implements ValueObject
     public function isSameValueAs(ValueObject $other)
     {
         return (new EqualsBuilder)
-        ->setEquals($this->isValidateType($other))
+        ->setEquals($this->isValidType($other))
         ->append($this->value1, $other->value1)
         ->append($this->value2, $other->value2)
         ->isEquals();

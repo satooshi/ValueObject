@@ -16,7 +16,7 @@ trait ValueObjectTrait
      *
      * @return boolean
      */
-    final private function isValidateType(ValueObject $other)
+    final private function isValidType(ValueObject $other)
     {
         return get_called_class() === get_class($other);
     }
